@@ -1,0 +1,30 @@
+[2019-12-24 10:31:26,754] 
+1/10 * Epoch 1 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=4.2153 | _timers/batch_time=4985.5850 | _timers/data_time=4985.5841 | _timers/model_time=0.0007 | loss=0.0682
+1/10 * Epoch 1 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=4.0027 | _timers/batch_time=5134.2917 | _timers/data_time=5134.2911 | _timers/model_time=0.0004 | loss=0.0492
+[2019-12-25 04:01:58,369] 
+2/10 * Epoch 2 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=3.8462 | _timers/batch_time=5328.7975 | _timers/data_time=5328.7968 | _timers/model_time=0.0004 | loss=0.0337
+2/10 * Epoch 2 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=4.0302 | _timers/batch_time=5100.2324 | _timers/data_time=5100.2318 | _timers/model_time=0.0004 | loss=0.0231
+[2019-12-25 12:17:40,094] 
+3/10 * Epoch 3 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=11.3577 | _timers/batch_time=3175.8063 | _timers/data_time=3175.8056 | _timers/model_time=0.0004 | loss=0.0225
+3/10 * Epoch 3 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.9677 | _timers/batch_time=1083.7420 | _timers/data_time=1083.7415 | _timers/model_time=0.0004 | loss=0.0193
+[2019-12-25 16:02:56,092] 
+4/10 * Epoch 4 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.0498 | _timers/batch_time=1142.3983 | _timers/data_time=1142.3977 | _timers/model_time=0.0004 | loss=0.0176
+4/10 * Epoch 4 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.8305 | _timers/batch_time=1094.1322 | _timers/data_time=1094.1317 | _timers/model_time=0.0004 | loss=0.0161
+[2019-12-25 19:44:22,642] 
+5/10 * Epoch 5 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.3220 | _timers/batch_time=1119.1236 | _timers/data_time=1119.1230 | _timers/model_time=0.0004 | loss=0.0153
+5/10 * Epoch 5 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.9726 | _timers/batch_time=1083.3228 | _timers/data_time=1083.3222 | _timers/model_time=0.0004 | loss=0.0144
+[2019-12-25 23:46:43,050] 
+6/10 * Epoch 6 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=17.2550 | _timers/batch_time=1276.0347 | _timers/data_time=1276.0341 | _timers/model_time=0.0004 | loss=0.0140
+6/10 * Epoch 6 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.9674 | _timers/batch_time=1082.9651 | _timers/data_time=1082.9645 | _timers/model_time=0.0004 | loss=0.0135
+[2019-12-26 03:27:45,803] 
+7/10 * Epoch 7 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.2997 | _timers/batch_time=1120.4175 | _timers/data_time=1120.4169 | _timers/model_time=0.0004 | loss=0.0132
+7/10 * Epoch 7 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=19.1211 | _timers/batch_time=1074.7828 | _timers/data_time=1074.7823 | _timers/model_time=0.0004 | loss=0.0129
+[2019-12-26 07:10:06,880] 
+8/10 * Epoch 8 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.3148 | _timers/batch_time=1119.3835 | _timers/data_time=1119.3829 | _timers/model_time=0.0004 | loss=0.0127
+8/10 * Epoch 8 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.7380 | _timers/batch_time=1096.4337 | _timers/data_time=1096.4332 | _timers/model_time=0.0004 | loss=0.0125
+[2019-12-26 10:49:20,348] 
+9/10 * Epoch 9 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.6112 | _timers/batch_time=1101.7578 | _timers/data_time=1101.7572 | _timers/model_time=0.0004 | loss=0.0124
+9/10 * Epoch 9 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.9374 | _timers/batch_time=1084.7853 | _timers/data_time=1084.7846 | _timers/model_time=0.0005 | loss=0.0122
+[2019-12-26 14:31:04,247] 
+10/10 * Epoch 10 (train): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.2819 | _timers/batch_time=1120.9766 | _timers/data_time=1120.9760 | _timers/model_time=0.0004 | loss=0.0121
+10/10 * Epoch 10 (valid): _base/lr=0.0050 | _base/momentum=0.9000 | _timers/_fps=18.9532 | _timers/batch_time=1083.9529 | _timers/data_time=1083.9524 | _timers/model_time=0.0003 | loss=0.0120

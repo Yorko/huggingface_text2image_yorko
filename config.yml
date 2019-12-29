@@ -1,0 +1,16 @@
+# pretrained Transformer model
+transformer_pretrained_model_name: distilbert-base-uncased
+bert_hidden_size: 768
+
+# pretrained BigGAN model 
+biggan_pretrained_model_name: biggan-deep-128
+biggan_emb_size: 128
+num_imagenet_classes: 1000
+
+# trained mapping model
+path_to_mapping_model_ckpt: training_logs/checkpoints/best_full.pth
+
+# Maximal sequence length in words
+max_seq_length: 15
+display_pause_time: 0.5
+torch_device: cuda
