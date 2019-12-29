@@ -88,14 +88,16 @@ The model doesn't seem to cope with >1 class in a caption. In this example, we h
 
 ### Good traits of the built solution
 
-- The mapping is done with a simple model (a linear mapping) and it's proved to work for some ImageNet classes
-- The model copes fairly enough with images corresponding to ImageNet classes that are well presented in COCO captions. eg. bus, sign, coffee or, of course, dog. 
+- The mapping is done with a simple model (a linear mapping) and it's shown to work for some ImageNet classes 
+- Contextualization works, there are no "puppies" in ImageNet, however the model shows dogs for a phrase "Oh, such a cute PuPPy!:)"
+- Thanks to BERT's WordPiece tokenization, the solution is somewhat stable, small typos, punctuation etc. don't spoil the picture - like in the example with "Oh, such a cute PuPPy!:)"
+- The model copes fairly enough with images corresponding to ImageNet classes that are well presented in COCO captions. eg. bus, sign, coffee and, of course, dog. 
+- It also copes pretty well with the "poem" (I was walking out of the bookstore \ when I saw a huge volcano in the background \ I went slowly by the park \ and met an old friend of mine)
 
 ### Bad traits of the built solution
 
 - Only 155 ImageNet classes are there in training COCO captions, so we fail to visualize some concepts like cobra or volcano
 - The model doesn't seem to cope with >1 class in a caption, eg. "a dog is faster that a cat" - only dogs are drawn. Or "an elephant is slower than a bus" - some funny mixtures of animals and means of transport are produced.
-- Text is split by spaces for visualization word by word, thus plural forms or punctuation can spoil the result (easy to fix though)
 
 ### What didn't work
 
@@ -111,7 +113,7 @@ The model doesn't seem to cope with >1 class in a caption. In this example, we h
 Here I address both "Building a dataset of text sequence associated to ImageNet classes" and "Building a dataset for training a mapping function" parts of the provided assignment. 
 
 - Here I used COCO captions. This covered 155 ImageNet classes out of 598 that we used here. But actually, any text will do as long as it contains ImageNet classes. So the training dataset can be extended with eg. extracts from Wikipedia pages with corresponding words ("Lion", "Cheetah", "Volcano" etc.)
-- Adding synthetic captions. With a template like "<SUBJ> <VERB> <WORD> <PLACE>" we can generate as many captions as we wish if we vary subject (I, he, she, we, they etc.), verb (saw, noticed, spotted etc.), place (here, there, in front of the building etc) and word (1k ImageNet classes). As I mentioned, I didn't train a better model with these synthetic captions, but still it's a good way to extend the training set for the mapping model
+- Adding synthetic captions. With a template like "\<<SUBJ\>> \<<VERB\>> \<<WORD\>> \<<PLACE\>>" we can generate as many captions as we wish if we vary subject (I, he, she, we, they etc.), verb (saw, noticed, spotted etc.), place (here, there, in front of the building etc) and word (1k ImageNet classes). As I mentioned, I didn't train a better model with these synthetic captions, but still it's a good way to extend the training set for the mapping model
 - Augmentations, eg. synonym replacement. We didn't find the word "beast" in COCO captions, but we can take existing ones with words "lion" or "tiger" and replace them with the word "beast" to get new captions. 
     
 More remarks:
@@ -120,6 +122,14 @@ More remarks:
  - A more complicated model can be trained, eg. a MLP
  
 # Part 3. Console utility
+
+The end-to-end text2image model is defined in `scripts/run_model.py`. The script prompts user to insert a phrase, and then visualizes generated images in a separate window. 
+
+ - Install dependencies listed in `requirements.txt`
+ - Check configs in `config.yml`, in particular whether the model needs to be run on CPU or GPU
+ - Run `python scripts/run_model.py`
+ 
+This initializes 2 pre-trained models (transformer and BigGAN), loads pre-trained mapping model, prompts user to insert a phrase and then visualizes the corresponding slideshow (generated images) in a separate window (not in a terminal, thus wouldn't work on a remote machine). On CPU, it takes some 10 sec. to generate a minibatch of images. With GPU it's about 1.5 sec. 
 
 # Part 4. Streamlit application 
 Work in progress. This will be a fully dockerized application, ready to be deployed to a AWS instance or similar cloud service. 

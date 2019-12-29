@@ -1,3 +1,4 @@
+import random
 import numpy as np
 from pathlib import Path
 import yaml
@@ -24,6 +25,7 @@ class TextToImageModel:
         logging.getLogger().addHandler(logging.StreamHandler())
         
         self.torch_device = torch.device(self.config['torch_device'])
+        self.fix_all_seeds()
 
         self.tokenizer, self.language_model = \
             self._initialize_tokenizer_n_transformer()
@@ -33,8 +35,6 @@ class TextToImageModel:
         self.mapping_model = self._load_mapping_model()
 
         self.max_seq_length = self.config['max_seq_length']
-
-
 
     @staticmethod
     def _get_project_dir():
@@ -49,6 +49,14 @@ class TextToImageModel:
                 print(exc)
 
         return config
+
+    def fix_all_seeds(self):
+
+        seed = self.config['seed']
+        np.random.seed(seed)
+        random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
 
     def _initialize_tokenizer_n_transformer(self):
         """
@@ -207,9 +215,9 @@ class TextToImageModel:
 
         self.logger.info('Generating images...')
 
-        seed = int(noise_seed_vector.sum().item()) if noise_seed_vector is not None else None
         noise_vector = truncated_noise_sample(truncation=truncation,
-                                              batch_size=batch_size, seed=seed)
+                                              batch_size=batch_size,
+                                              seed=self.config['seed'])
         noise_vector = torch.from_numpy(noise_vector).to(self.torch_device)
 
         if name is not None:
@@ -242,7 +250,7 @@ class TextToImageModel:
             dense_class_vector=mapping_model_output)
 
         for i, img in enumerate(generated_images[1:len(words) + 1]):
-            plt.figure(1);
+            plt.figure(1)
             plt.clf()
             title = '{} {} {}'.format(" ".join(words[:i]),
                                       words[i].upper(),
@@ -258,5 +266,5 @@ if __name__ == '__main__':
     model = TextToImageModel()
 
     while True:
-        text = input("Insert text:\t")
-        model.play(text)
+        inserted_text = input("Insert text:\t")
+        model.play(inserted_text)

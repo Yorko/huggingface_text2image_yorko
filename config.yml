@@ -8,9 +8,10 @@ biggan_emb_size: 128
 num_imagenet_classes: 1000
 
 # trained mapping model
-path_to_mapping_model_ckpt: training_logs/checkpoints/best_full.pth
+path_to_mapping_model_ckpt: training_logs/full/checkpoints/best_full.pth
 
-# Maximal sequence length in words
-max_seq_length: 15
-display_pause_time: 0.5
-torch_device: cuda
+max_seq_length: 15        # maximal sequence length in words
+display_pause_time: 0.5   # time interval between two images displayed
+torch_device: cpu         # either 'cuda' or 'cpu'
+seed: 17                  # random seed for NumPy, cudnn and PyTorch
+
