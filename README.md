@@ -62,15 +62,29 @@ This approach works fairly well with classes well presented in COCO captions, eg
 
 Creating GIFs is a bit tedious, so please look for more examples in the notebook. Also, these animations can be played with saved images:
 
-> python scripts/display_image_series.py --path_to_gen_images img --file_mask ex1_dog --text "a dog is faster than a cat"
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex1_dog --text "a dog is faster than a cat"`
+
+We see that contextualization works. There's no "puppy" in ImageNet classes, however we succeed in drawing dogs in the following example. Moreover, due to Wordpiece, the BERT hidden states are not harmed by extra punctuation, camel case etc. 
+
+<img src="https://habrastorage.org/webt/9j/wy/ow/9jwyowwbmeks-2zgh3xa-cc-8ku.gif" width=30% />
+
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex2_puppy --text "Oh, such a cute PuPPy\!:)"`
+
+Typos are also handled (sometimes).
+
+<img src="https://habrastorage.org/webt/qq/sr/ca/qqsrcauhhxh-4mkvtifkfl91jo4.gif"  width=30%  />
+
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex3_buss "i was standing at the buss stop"`
+
+Some more simple examples.
 
 <img src="https://habrastorage.org/webt/mx/a1/g9/mxa1g9efast3iwzlcunqpptai-8.gif" width=30%/>
 
-> python scripts/display_image_series.py --path_to_gen_images img --file_mask ex2_bus --text "i went there by bus"
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex2_bus --text "i went there by bus"`
 
 <img src="https://habrastorage.org/webt/2i/mm/6m/2imm6mhqueplxlkvagidnfgikdq.gif" width=30%/>
 
-> python scripts/display_image_series.py --path_to_gen_images gen_images --file_mask ex5_sign_building  --text "there is a sign in front of a building"
+> `python scripts/display_image_series.py --path_to_gen_images gen_images --file_mask ex5_sign_building  --text "there is a sign in front of a building"`
 
 
 ### Bad cases
@@ -78,13 +92,13 @@ Some of classes are present in COCO captions but still are dominated by other ob
 
 <img src="https://habrastorage.org/webt/ce/yl/af/ceylaf77oqokvrxbxmiezya-qho.gif" width=30% />
 
-> python scripts/display_image_series.py --path_to_gen_images img --file_mask ex7_cobra --text "cobra is a dangerous animal"
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex10_cobra --text "cobra is a dangerous animal"`
 
 The model doesn't seem to cope with >1 class in a caption. In this example, we have both "elephant" and "bus", and some funny mixtures of animals and means of transport are produced. 
 
 <img src="https://habrastorage.org/webt/sv/_j/vx/sv_jvxa2xtnpu2g4xhx4q-ng7bs.gif" width=30% />
 
-> python scripts/display_image_series.py --path_to_gen_images img --file_mask ex9_elephant  --text "an elephant is slower than a bus"
+> `python scripts/display_image_series.py --path_to_gen_images img --file_mask ex12_elephant  --text "an elephant is slower than a bus"`
 
 ## Retrospective
 
