@@ -11,10 +11,10 @@ num_imagenet_classes: 1000
 path_to_mapping_model_ckpt: training_logs/full/checkpoints/best_full.pth
 
 max_seq_length: 15        # maximal sequence length in words
-display_pause_time: 0.5   # time interval between two images displayed
+display_pause_time: 1     # time interval between two images displayed
 torch_device: cpu         # either cuda or cpu
 seed: 17                  # random seed for NumPy, cudnn and PyTorch
-interactive: False        # setting this flag will prompt a user to insert custom text
+interactive: True         # setting this flag will prompt a user to insert custom text
                           # otherwise, strings from the following list are processed
 # Texts to visualize
 texts: ["a dog is faster than a cat",
