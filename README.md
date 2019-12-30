@@ -62,7 +62,21 @@ This approach works fairly well with classes well presented in COCO captions, eg
 
 Creating GIFs is a bit tedious, so please look for more examples in the notebook. Also, these animations can be played with saved images:
 
-> python scripts/display_image_series.py --path_to_gen_images img --file_mask ex1_dog --text "a dog is faster than a cat"
+`python scripts/display_image_series.py --path_to_gen_images img --file_mask ex1_dog --text "a dog is faster than a cat"`
+
+We see that contextualization works. There's no "puppy" in ImageNet classes, however we succeed in drawing dogs in the following example. Moreover, due to Wordpiece, the BERT hidden states are not harmed by extra punctuation, camel case etc. 
+
+<img src="https://habrastorage.org/webt/9j/wy/ow/9jwyowwbmeks-2zgh3xa-cc-8ku.gif" width=30% />
+
+`python scripts/display_image_series.py --path_to_gen_images img --file_mask ex2_puppy --text "Oh, such a cute PuPPy\!:)"`
+
+Typos are also handled (sometimes).
+
+<img src="https://habrastorage.org/webt/qq/sr/ca/qqsrcauhhxh-4mkvtifkfl91jo4.gif"  width=30%  />
+
+`python scripts/display_image_series.py --path_to_gen_images img --file_mask ex3_buss "i was standing at the buss stop"`
+
+Some more simple examples.
 
 <img src="https://habrastorage.org/webt/mx/a1/g9/mxa1g9efast3iwzlcunqpptai-8.gif" width=30%/>
 
