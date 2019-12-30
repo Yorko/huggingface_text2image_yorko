@@ -13,7 +13,7 @@ There are 4 parts that I present here:
 
 # Part 2. README
 ## Intro
-Here I train a mapping model with COCO captions. I realized that COCO captions is almost an ideal source to train the mapping model, although it covers a bit more than 50% of ImageNet classes and only 155 are left when we select those classes known to BERT (possible [improvements](#Possible-improvements) are discussed in the end).
+Here I train a mapping model with [COCO captions](http://cocodataset.org/#home). I realized that COCO captions is almost an ideal source to train the mapping model, although it covers a bit more than 50% of ImageNet classes and only 155 are left when we select those classes known to BERT (possible [improvements](#Possible-improvements) are discussed in the end).
 
 I select only those captions containing exactly **one** word from ImageNet classes.
 
@@ -29,9 +29,11 @@ The model itself is just a dense layer, so it performs a linear mapping of BERT 
 Mapping model input is sized `[max_seq_len x lm_hidden_size]` [15 x 768] <br>
 Mapping model output is sized `[max_seq_len x biggan_class_emb_dim]` [15 x 128]
 
-The model behavior is [analyzed](#Playing-around-with-the-model) in the end of this notebook. Also, [possible improvements](#Possible-improvements) are listed. 
+The model behavior is further [analyzed](#Playing-around-with-the-model). Also, [possible improvements](#Possible-improvements) are listed. 
 
 <img src="https://habrastorage.org/webt/ar/ed/sc/aredscxfrkrucqkmz3qfkslenfa.png" />
+
+_image credit: HuggingFace_
 
 ## COCO captions
 I utilize the `load_coco_data` script from Stanford's cs231n course and end up with ~400k training captions and 200k validation captions. Then I select only captions containing exactly one ImageNet word, thus left with 162k train captions and 79k validation captions.
@@ -120,16 +122,27 @@ More remarks:
  - The training dataset can be further enlarged with other captions, eg. [Conceptual Captions](https://ai.googleblog.com/2018/09/conceptual-captions-new-dataset-and.html)
  - Technically, training could have been done better, eg. with LR Finder
  - A more complicated model can be trained, eg. a MLP
+ - I considered the following as cheating and didn't implement it: but if there's an ImageNet word in a text (eg. cobra), then one can generate a BigGAN embedding for this word right away (using `BigGAN.embeddings(one_hot_from_names('name'))`) bypassing BERT and the mapping model. That would've solved the problem that some ImageNet classes are not there in the training dataset. 
  
 # Part 3. Console utility
 
-The end-to-end text2image model is defined in `scripts/run_model.py`. The script prompts user to insert a phrase, and then visualizes generated images in a separate window. 
+The end-to-end text2image model is defined in `scripts/text2image_model.py`. The script either prompts user to insert a phrase, and then visualizes generated images in a separate window. Or it replays examples defined in the `config.yml` file.
+
+### Running locally
+For a local interactive mode:
 
  - Install dependencies listed in `requirements.txt`
- - Check configs in `config.yml`, in particular whether the model needs to be run on CPU or GPU
- - Run `python scripts/run_model.py`
+ - Check configs in `config.yml`, in particular whether the model needs to be run on CPU or GPU, flag `interactive` needs to be turned to True
+ - Run `python scripts/text2image_model.py` and play around with your custom text
  
 This initializes 2 pre-trained models (transformer and BigGAN), loads pre-trained mapping model, prompts user to insert a phrase and then visualizes the corresponding slideshow (generated images) in a separate window (not in a terminal, thus wouldn't work on a remote machine). On CPU, it takes some 10 sec. to generate a minibatch of images. With GPU it's about 1.5 sec. 
 
+### Running a Docker container (WIP)
+
+- Build an image `docker build -t huggingface_text2image_yorko .`
+- Run the image `docker run huggingface_text2image_yorko`
+
+This is WIP as it currently doesn't open a new matplotlib window.
+
 # Part 4. Streamlit application 
-Work in progress. This will be a fully dockerized application, ready to be deployed to a AWS instance or similar cloud service. 
+Work in progress. This will be a fully dockerized application, ready to be deployed to a AWS instance or similar cloud service.

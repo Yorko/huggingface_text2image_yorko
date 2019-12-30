@@ -8,39 +8,52 @@ from matplotlib import pyplot as plt
 from IPython import display
 from transformers import AutoTokenizer, AutoModel
 from pytorch_pretrained_biggan.utils import one_hot_from_names
-from pytorch_pretrained_biggan import BigGAN, truncated_noise_sample, display_in_terminal
+from pytorch_pretrained_biggan import BigGAN, truncated_noise_sample
 
 
 class TextToImageModel:
     def __init__(self):
         """
         Initializes a tokenizer and Transformer as well as BigGAN model.
-
+        Loads trained mapping model.
+        Performs other minor configurations.
         """
 
         self.config = self._load_config()
 
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
-        logging.getLogger().addHandler(logging.StreamHandler())
-        
+        # saving configurations, fixing seeds
+        self.max_seq_length = self.config['max_seq_length']
+        self.seed = self.config['seed']
         self.torch_device = torch.device(self.config['torch_device'])
         self.fix_all_seeds()
 
+        # logging to stderr
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+        logging.getLogger().addHandler(logging.StreamHandler())
+
+        # 3 main models
         self.tokenizer, self.language_model = \
             self._initialize_tokenizer_n_transformer()
-
         self.gan_model = self._initialize_gan_model()
-
         self.mapping_model = self._load_mapping_model()
 
-        self.max_seq_length = self.config['max_seq_length']
 
     @staticmethod
     def _get_project_dir():
+        """
+        Return a full path to the project main directory.
+
+        :return: a Path object
+        """
         return Path(__file__).resolve().parent.parent
 
     def _load_config(self):
+        """
+        Loads configuration parameters from the YAML file.
+
+        :return: the config dictionary (dict)
+        """
 
         with open(self._get_project_dir() / 'config.yml', 'r') as f:
             try:
@@ -51,12 +64,16 @@ class TextToImageModel:
         return config
 
     def fix_all_seeds(self):
+        """
+        Fix all random seeds for reproducibility.
 
-        seed = self.config['seed']
-        np.random.seed(seed)
-        random.seed(seed)
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
+        :return: None
+        """
+
+        np.random.seed(self.seed)
+        random.seed(self.seed)
+        torch.manual_seed(self.seed)
+        torch.cuda.manual_seed_all(self.seed)
 
     def _initialize_tokenizer_n_transformer(self):
         """
@@ -80,7 +97,7 @@ class TextToImageModel:
     def _initialize_gan_model(self):
         """
         Initializes PyTorch BigGAN model. Pretrained model
-        name is specified in the config.yaml file
+        name is specified in the config.yaml file.
 
         :return: instance of pytorch_pretrained_biggan.BigGAN class
         """
@@ -93,6 +110,12 @@ class TextToImageModel:
         return gan_model
 
     def _load_mapping_model(self):
+        """
+        Loads the model which perform mapping between BERT hidden states and
+        BigGAN ImageNet class embeddings.
+
+        :return: None
+        """
 
         self.logger.info('Loading mapping model...')
 
@@ -116,11 +139,9 @@ class TextToImageModel:
 
     def encode_text_input(self, text):
         """
-
         Encodes the passed text with a Transformer model.
 
         :param text: text to encode (str)
-
         :return: Transformer hidden states (torch.Tensor),
                  size [max_seq_len x lm_hidden_size] (15 x 768)
         """
@@ -158,66 +179,30 @@ class TextToImageModel:
 
         return lm_hidden_states_first_example
 
-    def create_biggan_embeggings(self,
-                                 text,
-                                 label):
-        """
-
-        :param text: input text (str)
-        :param label: ImageNet class name (str)
-
-        :return: BigGAN class embeddings (torch.Tensor),
-                 size [max_seq_length x biggan_class_emb_dim] (15 x 128)
-        """
-        tokens = text.split()
-
-        if len(tokens) < self.max_seq_length:
-            tokens += ['[PAD]' for _ in range(self.max_seq_length - len(tokens))]
-        else:
-            tokens = tokens[:self.max_seq_length]
-
-        try:
-            # create a 1000-long OHE-vector indicating the ImageNet class for `label`
-            # easier to use try/except logic here though if-else blocks are preferred
-            class_vector = torch.tensor(one_hot_from_names(label))
-        except AssertionError:
-            # zeros if `label` is not found
-            class_vector = torch.zeros([1, self.config['num_imagenet_classes']])
-        
-        class_vector = class_vector.to(self.torch_device)
-
-        # BigGAN embeddings are identical for all words in `text`
-        embs = [self.gan_model.embeddings(class_vector) for _ in tokens]
-
-        with torch.no_grad():
-            embs = torch.cat(embs)
-
-        return embs
-
-    def generate_images(self, dense_class_vector=None, name=None, noise_seed_vector=None,
+    def generate_images(self, dense_class_vector=None, name=None,
                         truncation=0.4, batch_size=15):
         """
+        
+        Generates images from BigGAN ImageNet class embeddings. 
 
         :param dense_class_vector: used as a replacement of BigGAN internal
                 ImageNet class embeddings (torch.Tensor with 128 elements)
         :param name: converted in an associated ImageNet class and then
                 a dense class embedding using BigGAN's internal ImageNet
                 class embeddings (string)
-        :param noise_seed_vector: a vector used to control the seed
-                (seed set to the sum of the vector elements)
         :param truncation: a float between 0 and 1 to control image quality/diversity
                 tradeoff (see BigGAN paper)
         :param batch_size: number of images to generate
         :return: a tuple with two numpy arrays, the first one is shaped
                 [batch_size, 128, 128, 3], the second one is a raw output
-                from BigGAM generator, used to save images
+                from BigGAN generator, used to save images
         """
 
         self.logger.info('Generating images...')
 
         noise_vector = truncated_noise_sample(truncation=truncation,
                                               batch_size=batch_size,
-                                              seed=self.config['seed'])
+                                              seed=self.seed)
         noise_vector = torch.from_numpy(noise_vector).to(self.torch_device)
 
         if name is not None:
@@ -229,7 +214,7 @@ class TextToImageModel:
   
         input_vector = torch.cat([noise_vector, dense_class_vector], dim=1)
 
-        # Generate an image
+        # run generator 
         with torch.no_grad():
             output = self.gan_model.generator(input_vector, truncation)
 
@@ -241,6 +226,13 @@ class TextToImageModel:
         return output
 
     def play(self, text):
+        """
+
+        Plays a slideshow with generated images for each word of the given `text`.
+
+        :param text: a string
+        :return: None
+        """
 
         words = text.split()
 
@@ -263,8 +255,16 @@ class TextToImageModel:
 
 
 if __name__ == '__main__':
+    
     model = TextToImageModel()
 
-    while True:
-        inserted_text = input("Insert text:\t")
-        model.play(inserted_text)
+    # interactive mode - a user inserts a text
+    if model.config['interactive']:
+        while True:
+            inserted_text = input("Insert text:\t")
+            model.play(inserted_text)
+    # in the non-interactive mode texts are read from the config.yml file
+    else:
+        for text in model.config['texts']:
+            model.logger.info(text)
+            model.play(text)

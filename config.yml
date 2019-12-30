@@ -12,6 +12,17 @@ path_to_mapping_model_ckpt: training_logs/full/checkpoints/best_full.pth
 
 max_seq_length: 15        # maximal sequence length in words
 display_pause_time: 0.5   # time interval between two images displayed
-torch_device: cpu         # either 'cuda' or 'cpu'
+torch_device: cpu         # either cuda or cpu
 seed: 17                  # random seed for NumPy, cudnn and PyTorch
+interactive: False        # setting this flag will prompt a user to insert custom text
+                          # otherwise, strings from the following list are processed
+# Texts to visualize
+texts: ["a dog is faster than a cat",
+        "Oh, such a cute PuPPy!:)",
+        "i was standing at the buss stop",
+        "I was walking out of the bookstore.",
+        "when I saw a huge volcano in the background",
+        "I went slowly by the park",
+        "and met an old friend of mine"
+]
 
