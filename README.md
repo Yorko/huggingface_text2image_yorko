@@ -163,7 +163,9 @@ This initializes 2 pre-trained models (transformer and BigGAN), loads pre-traine
 
 # Part 4. Dockerized Streamlit application 
 
-Here we ship a Docker image with the logic implemented as a Streamlit application. 
+Here I ship a Docker image with the logic implemented as a Streamlit application. 
 
- - run `docker-compose up`
+ - run `docker-compose up` (noticed that it's better to allocate at least 8 Gb for the image)
  - open [http://localhost:8501](http://localhost:8501/)
+ 
+<img src="https://habrastorage.org/webt/gd/sc/c_/gdscc_8txktlzrnwjqudnreonxg.gif" width=50% />
