@@ -130,16 +130,13 @@ dmypy.json
 
 # Large 
 gif
-try_biggan
-
-# Mac shit
-.DS_Store
-.idea
-
-# from the original multimodal-code-exercise gitignore
-multimodal-code-exercise-yorko/.vscode
-.vscode/
+try_biggan/
 data/
 
 # not tidied up 
-scripts/train_simple_model.py
+src/train_simple_model.py
+
+# other
+.DS_Store
+.idea
+*.bkp

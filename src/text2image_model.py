@@ -1,10 +1,12 @@
 import random
 import numpy as np
-from time import sleep
 from pathlib import Path
 import yaml
 import logging
+from time import sleep
 import torch
+from matplotlib import pyplot as plt
+from IPython import display
 import streamlit as st
 from transformers import AutoTokenizer, AutoModel
 from pytorch_pretrained_biggan.utils import one_hot_from_names
@@ -225,30 +227,63 @@ class TextToImageModel:
         output = np.asarray(np.uint8(output), dtype=np.uint8)
         return output
 
-    def play(self, text):
+    def text_to_images(self, text):
         """
 
-        Plays a slideshow with generated images for each word of the given `text`.
+        Return images generated for phrase `text`.
 
         :param text: a string
-        :return: None
+        :return: generated_images (torch.Tensor),
+                 size: [<text length in words>, 128, 128, 3]
         """
-
-        words = text.split()
 
         hidden_states = self.encode_text_input(text)
         mapping_model_output = self.mapping_model(hidden_states)
         generated_images = self.generate_images(
             dense_class_vector=mapping_model_output)
 
+        return generated_images
+
+    def play_matplotlib(self, text):
+        """
+
+        Visualizes images generated for each word of the given `text`, with Matplotlib.
+
+        :param text: a string
+        :return: None
+        """
+
+        words = text.split()
+        generated_images = self.text_to_images(text)
+
+        for i, img in enumerate(generated_images[1:len(words) + 1]):
+            plt.figure(1)
+            plt.clf()
+            title = '{} {} {}'.format(" ".join(words[:i]),
+                                      words[i].upper(),
+                                      " ".join(words[i + 1:]))
+            plt.title(title)
+            plt.imshow(img)
+            plt.pause(self.config['display_pause_time'])
+            display.clear_output(wait=True)
+        plt.close()
+
+    def play_streamlit(self, text):
+        """
+
+        Visualizes images generated for each word of the given `text`, with Streamlit.
+
+        :param text: a string
+        :return: None
+        """
+
+        words = text.split()
+        generated_images = self.text_to_images(text)
+
         st_image_placeholder = st.empty()
 
         for i, img in enumerate(generated_images[1:len(words) + 1]):
-            caption = '{} {} {}'.format(" ".join(words[:i]),
-                                        words[i].upper(),
-                                        " ".join(words[i + 1:]))
-
-            st_image_placeholder.image(img, width=300, caption=caption)
+            st_image_placeholder.image(img, width=self.config['image_width'])
             sleep(self.config['display_pause_time'])
 
 
@@ -256,13 +291,16 @@ if __name__ == '__main__':
     
     model = TextToImageModel()
 
+    # here we visualize with Matplotlib only
+    # see app.py for visualization in a Streamlit app.
+
     # interactive mode - a user inserts a text
     if model.config['interactive']:
-        # while True:
-        inserted_text = st.text_area('Insert caption', '', key='inserted_text')
-        model.play(inserted_text.split('\n')[-1])
+        while True:
+            inserted_text = input("Insert text:\t")
+            model.play_matplotlib(inserted_text)
     # in the non-interactive mode texts are read from the config.yml file
     else:
         for text in model.config['texts']:
             model.logger.info(text)
-            model.play(text)
+            model.play_matplotlib(text)

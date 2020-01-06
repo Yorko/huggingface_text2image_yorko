@@ -12,6 +12,7 @@ path_to_mapping_model_ckpt: training_logs/full/checkpoints/best_full.pth
 
 max_seq_length: 15        # maximal sequence length in words
 display_pause_time: 1     # time interval between two images displayed
+image_width: 300          # image width used in Streamlit app
 torch_device: cpu         # either cuda or cpu
 seed: 17                  # random seed for NumPy, cudnn and PyTorch
 interactive: True         # setting this flag will prompt a user to insert custom text
