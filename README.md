@@ -1,10 +1,12 @@
-# 🤗Hugging Face ML researcher/engineer code exercise - Funky mutli-modal version
+# 🤗Hugging Face ML researcher/engineer code exercise - Funky multi-modal version
 
 By [Yury Kashnitsky](https://yorko.github.io/)
 
+<img src="https://habrastorage.org/webt/gd/sc/c_/gdscc_8txktlzrnwjqudnreonxg.gif" width=50% />
+
 There are 4 parts that I present here:
 
-1. A Jupyter notebook which expressess the way I tackled the problem
+1. A Jupyter notebook which expresses the way I tackled the problem
 2. Readme here is mostly populated with the content of that Jupyter notebook 
 3. Console utility 
 4. Dockerized Streamlit application
@@ -41,12 +43,12 @@ _image credit: HuggingFace_
 
 ## COCO captions
 
-I utilize the `load_coco_data` script from Stanford's cs231n course and end up with ~400k training captions and 200k validation captions. Then I select only captions containing exactly one ImageNet word, thus left with 162k train captions and 79k validation captions.
+I utilized the `load_coco_data` script from Stanford's cs231n course and ended up with ~400k training captions and 200k validation captions. Then I select only captions containing exactly one ImageNet word, thus left with 162k train captions and 79k validation captions.
 
 
 ## Mapping model
 
-Mapping model is just a Linear layer. It's output is compared to true BigGAN embeddings via MSE loss.
+The mapping model is just a Linear layer. Its output is compared to true BigGAN embeddings via MSE loss.
 
 <img src="https://habrastorage.org/webt/8w/0p/gi/8w0pgizh3_vhgaadly3tmsg3vnu.png" width=50% />
 
@@ -59,7 +61,7 @@ Mapping model is just a Linear layer. It's output is compared to true BigGAN emb
 
 ## Training the mapping model
 
-Described in the [notebook](notebooks/simple_mapping_model_coco_captions.ipynb), the actual training is done with a script based on that notebook (not tidied up and thus not attached here).
+As described in the [notebook](notebooks/simple_mapping_model_coco_captions.ipynb), the actual training is done with a script based on that notebook (not tidied up and thus not attached here).
 
 ## Playing around with the model
 
@@ -73,7 +75,7 @@ Creating GIFs is a bit tedious, so please look for more examples in the notebook
 
 > `python src/display_image_series.py --path_to_gen_images img --file_mask ex1_dog --text "a dog is faster than a cat"`
 
-We see that contextualization works. There's no "puppy" in ImageNet classes, however we succeed in drawing dogs in the following example. Moreover, due to Wordpiece, the BERT hidden states are not harmed by extra punctuation, camel case etc. 
+We see that contextualization works. There's no "puppy" in ImageNet classes, however, we succeed in drawing dogs in the following example. Moreover, due to Wordpiece, the BERT hidden states are not harmed by extra punctuation, camel case, etc. 
 
 <img src="https://habrastorage.org/webt/9j/wy/ow/9jwyowwbmeks-2zgh3xa-cc-8ku.gif" width=30% />
 
@@ -98,7 +100,7 @@ Some more simple examples.
 
 ### Bad cases
 
-Some of classes are present in COCO captions but still are dominated by other objects. Other classes are just not present in COCO captions, eg. cobra or volcano. 
+Some of the classes are present in COCO captions but still are dominated by other objects. Other classes are just not present in COCO captions, eg. cobra or volcano. 
 
 <img src="https://habrastorage.org/webt/ce/yl/af/ceylaf77oqokvrxbxmiezya-qho.gif" width=30% />
 
@@ -115,38 +117,38 @@ The model doesn't seem to cope with >1 class in a caption. In this example, we h
 ### Good traits of the built solution
 
 - The mapping is done with a simple model (a linear mapping) and it's shown to work for some ImageNet classes 
-- Contextualization works, there are no "puppies" in ImageNet, however the model shows dogs for a phrase "Oh, such a cute PuPPy!:)"
+- Contextualization works, there are no "puppies" in ImageNet, however, the model shows dogs for the phrase "Oh, such a cute PuPPy!:)"
 - Thanks to BERT's WordPiece tokenization, the solution is somewhat stable, small typos, punctuation etc. don't spoil the picture - like in the example with "Oh, such a cute PuPPy!:)"
-- The model copes fairly enough with images corresponding to ImageNet classes that are well presented in COCO captions. eg. bus, sign, coffee and, of course, dog. 
+- The model copes fairly enough with images corresponding to ImageNet classes that are well presented in COCO captions. eg. bus, sign, coffee, and, of course, dog. 
 - It also copes pretty well with the "poem" (I was walking out of the bookstore \ when I saw a huge volcano in the background \ I went slowly by the park \ and met an old friend of mine)
 
 ### Bad traits of the built solution
 
 - Only 155 ImageNet classes are there in training COCO captions, so we fail to visualize some concepts like cobra or volcano
-- The model doesn't seem to cope with >1 class in a caption, eg. "a dog is faster that a cat" - only dogs are drawn. Or "an elephant is slower than a bus" - some funny mixtures of animals and means of transport are produced.
+- The model doesn't seem to cope with >1 class in a caption, eg. "a dog is faster than a cat" - only dogs are drawn. Or "an elephant is slower than a bus" - some funny mixtures of animals and means of transport are produced.
 
 ### What didn't work
 
 - Keeping original captions with up to 8 ImageNet words in each one. Thus the target BigGAN embedding matrix contains embeddings for more than one class. In my case the model failed to learn anything
-- Replacing simple linear mapping with a more complex MLP didn't improve results
-- Tried adding simple patterns to COCO captions, actually had a template for several patterns, each one produced 1k examples like "I noticed a truck", "she saw a sign" etc. The model didn't train well for me, probably just a matter of learning rate
+- Replacing simple linear mapping with a more complex MLP didn't improve the results
+- Tried adding simple patterns to COCO captions, actually had a template for several patterns, each one produced 1k examples like "I noticed a truck", "she saw a sign" etc. The model didn't train well for me, probably just a matter of the learning rate
 
 
 ### Possible improvements
 
 > List some improvements you would propose to improve this data generation process 
 
-Here I address both "Building a dataset of text sequence associated to ImageNet classes" and "Building a dataset for training a mapping function" parts of the provided assignment. 
+Here I address both the "Building a dataset of text sequence associated with ImageNet classes" and "Building a dataset for training a mapping function" parts of the provided assignment. 
 
 - Here I used COCO captions. This covered 155 ImageNet classes out of 598 that we used here. But actually, any text will do as long as it contains ImageNet classes. So the training dataset can be extended with eg. extracts from Wikipedia pages with corresponding words ("Lion", "Cheetah", "Volcano" etc.)
 - Adding synthetic captions. With a template like "\<<SUBJ\>> \<<VERB\>> \<<WORD\>> \<<PLACE\>>" we can generate as many captions as we wish if we vary subject (I, he, she, we, they etc.), verb (saw, noticed, spotted etc.), place (here, there, in front of the building etc) and word (1k ImageNet classes). As I mentioned, I didn't train a better model with these synthetic captions, but still it's a good way to extend the training set for the mapping model
-- Augmentations, eg. synonym replacement. We didn't find the word "beast" in COCO captions, but we can take existing ones with words "lion" or "tiger" and replace them with the word "beast" to get new captions. 
+- Augmentations, eg. synonym replacement. We didn't find the word "beast" in COCO captions, but we can take existing ones with the words "lion" or "tiger" and replace them with the word "beast" to get new captions. 
 
 More remarks:
 
  - The training dataset can be further enlarged with other captions, eg. [Conceptual Captions](https://ai.googleblog.com/2018/09/conceptual-captions-new-dataset-and.html)
  - Technically, training could have been done better, eg. with LR Finder
- - A more complicated model can be trained, eg. a MLP
+ - A more complicated model can be trained, eg. an MLP
  - I considered the following as cheating and didn't implement it: but if there's an ImageNet word in a text (eg. cobra), then one can generate a BigGAN embedding for this word right away (using `BigGAN.embeddings(one_hot_from_names('name'))`) bypassing BERT and the mapping model. That would've solved the problem that some ImageNet classes are not there in the training dataset. 
 
 # Part 3. Console utility
@@ -155,11 +157,11 @@ The end-to-end text2image model is defined in `src/text2image_model.py`. The scr
 
 
  - Install dependencies listed in `requirements.txt`
- - Check configs in `config.yml`, in particular whether the model needs to be run on CPU or GPU, flag `interactive` needs to be turned to True
+ - Check configs in `config.yml`, in particular, whether the model needs to be run on CPU or GPU, flag `interactive` needs to be turned to True
  - Run `python src/text2image_model.py` and play around with your custom text
  - Alternatively, set the `interactive` flag to False, then examples from the `config.yml` will be replayed. 
 
-This initializes 2 pre-trained models (transformer and BigGAN), loads pre-trained mapping model, prompts user to insert a phrase and then visualizes the corresponding slideshow (generated images) in a separate window (not in a terminal, thus wouldn't work on a remote machine). On CPU, it takes some 10 sec. to generate a minibatch of images. With GPU it's about 1.5 sec. 
+This initializes 2 pre-trained models (transformer and BigGAN), loads pre-trained mapping model, prompts the user to insert a phrase, and then visualizes the corresponding slideshow (generated images) in a separate window (not in a terminal, thus wouldn't work on a remote machine). On CPU, it takes some 10 seconds to generate a minibatch of images. With GPU it's about 1.5 sec. 
 
 # Part 4. Dockerized Streamlit application 
 
